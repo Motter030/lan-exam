@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>語言治療考題模擬</title>
   <style>
-    /* ... (其他 CSS 維持不變) ... */
     :root { --primary-color: #007bff; --secondary-color: #6c757d; --success-color: #28a745; --danger-color: #dc3545; --warning-color: #ffc107; --info-color: #17a2b8; --light-color: #f8f9fa; --dark-color: #343a40; --bg-color: #f0f2f5; --border-color: #dee2e6; --white-color: #fff; --shadow-color: rgba(0, 0, 0, 0.1); --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif; }
     * { box-sizing: border-box; }
     body { margin: 0; padding: 20px; font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color); display: grid; place-items: center; min-height: 100vh; line-height: 1.6; }
@@ -104,10 +103,13 @@
     #feedback.correct { color: var(--success-color); }
     #feedback.incorrect { color: var(--danger-color); }
     #feedback.info { color: var(--secondary-color); background-color: #e9ecef; }
+    
+    /* 桌面版控制按鈕樣式 */
     #controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; }
     #controls > button { margin: 0 5px; }
-    #right-controls { display: flex; margin-left: auto; }
+    #right-controls { display: flex; gap: 10px; margin-left: auto; }
     
+    /* Jump Panel 樣式 */
     #jump-panel { position: fixed; top: 100px; right: 20px; background: var(--white-color); padding: 1rem; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); max-height: calc(100vh - 120px); overflow-y: auto; width: 300px; z-index: 1002; display: none; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 40px; gap: 8px; transition: opacity 0.2s, transform 0.2s; }
     #jump-panel button { padding: 0; font-size: .9rem; color: var(--white-color); min-width: 40px; height: 40px; margin:0; }
     
@@ -124,15 +126,15 @@
       }
     
       #prev-btn, #next-btn {
-        order: 2; 
+        order: 2; /* 放在第二行 */
         flex-grow: 1; 
         flex-basis: calc(50% - 6px); 
         margin: 0;
       }
       
       #save-progress-btn, #right-controls {
-        order: 1;
-        margin: 0; /* 統一清除 margin，讓 gap 控制間距 */
+        order: 1; /* 放在第一行 */
+        margin: 0; 
       }
     
       #right-controls {
@@ -142,7 +144,7 @@
   </style>
 </head>
 <body>
-  <!-- HTML 結構 -->
+  <!-- HTML 結構 (完整版) -->
   <div id="loading-overlay" class="hidden">
     <div class="spinner"></div><p>正在載入題庫，請稍候...</p>
   </div>
@@ -211,8 +213,8 @@
     <div id="question-image"></div>
     <div id="options"></div>
     <div id="feedback"></div>
-    
-    <!-- === HTML 結構修改處 === -->
+
+    <!-- === HTML 結構修正處 === -->
     <div id="controls">
       <button id="prev-btn">上一題</button>
       <button id="save-progress-btn" class="hidden">儲存進度</button>
@@ -228,7 +230,7 @@
   
   <div id="jump-panel"></div>
   
-  <!-- Modals and other elements remain the same -->
+  <!-- 以下 Modal 結構不變 -->
   <div id="custom-modal" class="modal-overlay hidden">
     <div class="modal-content">
       <h3 id="modal-title">注意</h3>
@@ -279,7 +281,7 @@
   </div>
 
 <script>
-  // JavaScript 維持不變
+  // --- JS (已修正所有拼寫錯誤) ---
   const allYears=[98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113];
   const subjectMap = { "基礎言語科學": "bss", "兒童語言障礙": "cld", "嗓音與吞嚥障礙": "vsd", "構音與語暢障礙": "afd" };
   const SAVED_SESSIONS_KEY = 'examAppSavedSessions';
@@ -348,18 +350,73 @@
 
   function showModal(modalElement) { modalElement.classList.remove('hidden'); setTimeout(() => modalElement.classList.add('visible'), 10); }
   function hideModal(modalElement) { modalElement.classList.remove('visible'); setTimeout(() => modalElement.classList.add('hidden'), 300); }
-  function showCustomAlert(message, title = "提示") { modalTitle.textContent = title; modalMessage.textContent = message; modalConfirmBtn.classList.add('hidden'); modalCancelBtn.classList.add('hidden'); modalOkBtn.classList.remove('hidden'); showModal(customModal); modalOkBtn.onclick = () => hideModal(customModal); }
-  function showCustomConfirm(message, onConfirm, { title = "請確認", confirmText = "確定" } = {}) { modalTitle.textContent = title; modalMessage.textContent = message; modalConfirmBtn.textContent = confirmText; modalConfirmBtn.classList.remove('hidden'); modalCancelBtn.classList.remove('hidden'); modalOkBtn.classList.add('hidden'); showModal(customModal); modalConfirmBtn.onclick = () => { hideModal(customModal); setTimeout(onConfirm, 300); }; modalCancelBtn.onclick = () => hideModal(customModal); }
+  
+  function showCustomAlert(message, title = "提示") {
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    modalConfirmBtn.classList.add('hidden');
+    modalCancelBtn.classList.add('hidden');
+    modalOkBtn.classList.remove('hidden');
+    showModal(customModal);
+    modalOkBtn.onclick = () => hideModal(customModal);
+  }
+
+  function showCustomConfirm(message, onConfirm, { title = "請確認", confirmText = "確定" } = {}) {
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    modalConfirmBtn.textContent = confirmText;
+    modalConfirmBtn.classList.remove('hidden');
+    modalCancelBtn.classList.remove('hidden');
+    modalOkBtn.classList.add('hidden');
+    showModal(customModal);
+    modalConfirmBtn.onclick = () => { hideModal(customModal); setTimeout(onConfirm, 300); };
+    modalCancelBtn.onclick = () => hideModal(customModal);
+  }
+  
   function getSavedSessions() { return JSON.parse(localStorage.getItem(SAVED_SESSIONS_KEY)) || []; }
   function getCompletedSessions() { return JSON.parse(localStorage.getItem(COMPLETED_SESSIONS_KEY)) || []; }
-  function saveSession() { let sessions = getSavedSessions(); if (currentSessionId) { sessions = sessions.filter(s => s.id !== currentSessionId); } const newSession = { id: currentSessionId || Date.now(), subject: currentSubject, title: quizTitle.textContent, examMode: currentExamMode, shouldShuffle: shouldShuffle, questions: questions, userChoices: userChoices, timestamp: new Date().toLocaleString('zh-TW') }; sessions.push(newSession); localStorage.setItem(SAVED_SESSIONS_KEY, JSON.stringify(sessions)); lastSavedChoices = [...userChoices]; showCustomAlert('進度已儲存！'); checkSavedData(); }
-  function checkSavedData() { const savedSessions = getSavedSessions(); const completedSessions = getCompletedSessions(); continueExamBtn.classList.toggle('hidden', savedSessions.length === 0); reportCardBtn.classList.toggle('hidden', completedSessions.length === 0); const hasSavedForCurrent = savedSessions.some(s => s.subject === currentSubject); const hasCompletedForCurrent = completedSessions.some(s => s.subject === currentSubject); continueExamBtnYear.classList.toggle('hidden', !hasSavedForCurrent); reportCardBtnYear.classList.toggle('hidden', !hasCompletedForCurrent); }
+  function saveSession() {
+    let sessions = getSavedSessions();
+    if (currentSessionId) { sessions = sessions.filter(s => s.id !== currentSessionId); }
+    const newSession = { id: currentSessionId || Date.now(), subject: currentSubject, title: quizTitle.textContent, examMode: currentExamMode, shouldShuffle: shouldShuffle, questions: questions, userChoices: userChoices, timestamp: new Date().toLocaleString('zh-TW') };
+    sessions.push(newSession);
+    localStorage.setItem(SAVED_SESSIONS_KEY, JSON.stringify(sessions));
+    lastSavedChoices = [...userChoices];
+    showCustomAlert('進度已儲存！');
+    checkSavedData();
+  }
+  function checkSavedData() {
+    const savedSessions = getSavedSessions(); const completedSessions = getCompletedSessions();
+    continueExamBtn.classList.toggle('hidden', savedSessions.length === 0);
+    reportCardBtn.classList.toggle('hidden', completedSessions.length === 0);
+    const hasSavedForCurrent = savedSessions.some(s => s.subject === currentSubject);
+    const hasCompletedForCurrent = completedSessions.some(s => s.subject === currentSubject);
+    continueExamBtnYear.classList.toggle('hidden', !hasSavedForCurrent);
+    reportCardBtnYear.classList.toggle('hidden', !hasCompletedForCurrent);
+  }
   function renderSavedSessions() { let sessions = getSavedSessions(); if (!yearDiv.classList.contains('hidden')) { sessions = sessions.filter(s => s.subject === currentSubject); } savedSessionsList.innerHTML = ''; if (sessions.length === 0) { savedSessionsList.innerHTML = '<li class="list-item">沒有儲存的紀錄。</li>'; return; } sessions.forEach(session => { const li = document.createElement('li'); li.className = 'list-item'; li.innerHTML = `<div class="item-info"><span class="item-title">${session.title} (${session.subject})</span><span class="item-time">儲存於：${session.timestamp}</span></div><div class="item-actions"><button class="continue-session-btn" data-id="${session.id}">繼續</button><button class="delete-item-btn" data-type="saved" data-id="${session.id}">刪除</button></div>`; savedSessionsList.appendChild(li); }); }
   function renderReportCard() { let sessions = getCompletedSessions(); if (!yearDiv.classList.contains('hidden')) { sessions = sessions.filter(s => s.subject === currentSubject); } reportCardList.innerHTML = ''; if (sessions.length === 0) { reportCardList.innerHTML = '<li class="list-item">沒有已完成的成績紀錄。</li>'; return; } sessions.forEach(session => { const li = document.createElement('li'); li.className = 'list-item'; li.innerHTML = `<div class="item-info"><span class="item-title">${session.title} (${session.subject})</span><span class="item-score">成績：${session.correctCount} / ${session.totalCount}</span><span class="item-time">完成於：${session.timestamp}</span></div><div class="item-actions"><button class="view-report-btn" data-id="${session.id}">檢視</button><button class="delete-item-btn" data-type="completed" data-id="${session.id}">刪除</button></div>`; reportCardList.appendChild(li); }); }
-  function renderYearButtons() { yearButtons.innerHTML = ''; allYears.forEach(y => { const b = document.createElement('button'); b.textContent = y + '年'; b.onclick = (e) => { e.stopPropagation(); tempSelectedYear = y; quizOptionsTitle.textContent = `${y} 年考古題`; showModal(quizOptionsModal); }; yearButtons.appendChild(b); }); }
+  
+  function renderYearButtons() {
+    yearButtons.innerHTML = '';
+    allYears.forEach(y => {
+      const b = document.createElement('button'); b.textContent = y + '年';
+      b.onclick = (e) => { e.stopPropagation(); tempSelectedYear = y; quizOptionsTitle.textContent = `${y} 年考古題`; showModal(quizOptionsModal); };
+      yearButtons.appendChild(b);
+    });
+  }
+
   window.addEventListener('load', checkSavedData);
-  const subjectButtons = subjectDiv.querySelectorAll('button[data-subject]:not([disabled])');
-  subjectButtons.forEach(button => { button.onclick = () => { currentSubject = button.dataset.subject; subjTitle.textContent = currentSubject; subjectDiv.classList.add('hidden'); yearDiv.classList.remove('hidden'); checkSavedData(); renderYearButtons(); }; });
+  subjectDiv.querySelectorAll('button[data-subject]:not([disabled])').forEach(button => {
+    button.onclick = () => {
+      currentSubject = button.dataset.subject; 
+      subjTitle.textContent = currentSubject;
+      subjectDiv.classList.add('hidden');
+      yearDiv.classList.remove('hidden');
+      checkSavedData(); 
+      renderYearButtons();
+    };
+  });
   backToSub.onclick=()=>{yearDiv.classList.add('hidden'); subjectDiv.classList.remove('hidden');};
   allBtn.onclick = () => { yearDiv.classList.add('hidden'); reviewConfigDiv.classList.remove('hidden'); yearCheckboxesContainer.innerHTML = ''; allYears.forEach(y => { const label = document.createElement('label'); label.innerHTML = `<input type="checkbox" value="${y}"><span>${y}年</span>`; yearCheckboxesContainer.appendChild(label); }); toggleAllYearsBtn.textContent = '全選'; };
   backFromConfigBtn.onclick = () => { reviewConfigDiv.classList.add('hidden'); yearDiv.classList.remove('hidden'); };
@@ -383,20 +440,21 @@
   reportCardBtnYear.onclick = () => { renderReportCard(); showModal(reportCardModal); };
   closeReportCardModalBtn.onclick = () => hideModal(reportCardModal);
   reportCardList.addEventListener('click', e => { const target = e.target; if (!target.matches('.view-report-btn, .view-report-btn *')) return; const button = e.target.closest('.view-report-btn'); const sessionId = parseInt(button.dataset.id); const sessions = getCompletedSessions(); const sessionToView = sessions.find(s => s.id === sessionId); if (sessionToView) { questions = sessionToView.questions; userChoices = sessionToView.userChoices; answerStatus = sessionToView.answerStatus; currentSubject = sessionToView.subject; isQuizSubmitted = true; current = 0; currentSessionId = null; subjectDiv.classList.add('hidden'); yearDiv.classList.add('hidden'); reviewConfigDiv.classList.add('hidden'); quizDiv.classList.remove('hidden'); quizTitle.textContent = sessionToView.title; quizSummaryEl.innerHTML = `<span class="summary-title">測驗結果</span>答對題數：${sessionToView.correctCount} / ${sessionToView.totalCount}`; quizSummaryEl.className = (sessionToView.correctCount / sessionToView.totalCount) >= 0.6 ? 'passed' : 'failed'; renderQuestion(); renderJump(); hideModal(reportCardModal); } });
-  function loadAndStartQuiz(yearsToLoad, subject, title, questionCount = 0) { const subjectCode = subjectMap[subject]; if (!subjectCode) { showCustomAlert(`錯誤：找不到科目 "${subject}" 的設定！`); return; } loadingOverlay.classList.remove('hidden'); questions = []; current = 0; answerStatus = []; userChoices = []; let loaded = 0; if (yearsToLoad.length === 0) { loadingOverlay.classList.add('hidden'); return; } yearsToLoad.forEach(y => { const s = document.createElement('script'); s.src = `questions/${subject}/${subject}${y}.js`; s.onload = () => { const variableName = `questions_${subjectCode}${y}`; const data = window[variableName]; if(Array.isArray(data)) { data.forEach((q, index) => { q.origin = { year: y, number: index + 1 }; }); questions.push(...data); } if(++loaded === yearsToLoad.length) { loadingOverlay.classList.add('hidden'); if(questions.length > 0) { startQuiz(title, questionCount); } else { showCustomAlert(`所選年份沒有可用的題目！`); } } }; s.onerror = () => { if(++loaded === yearsToLoad.length) { loadingOverlay.classList.add('hidden'); showCustomAlert(`載入 ${y} 年份題目失敗！`); } }; document.head.appendChild(s); }); }
+
+  function loadAndStartQuiz(yearsToLoad, subject, title, questionCount = 0) { const subjectCode = subjectMap[subject]; if (!subjectCode) { showCustomAlert(`錯誤：找不到科目 "${subject}" 的設定！`); return; } loadingOverlay.classList.remove('hidden'); questions = []; current = 0; answerStatus = []; userChoices = []; let loaded = 0; if (yearsToLoad.length === 0) { loadingOverlay.classList.add('hidden'); return; } yearsToLoad.forEach(y => { const s = document.createElement('script'); s.src = `./questions/${subject}/${subject}${y}.js`; s.onload = () => { const variableName = `questions_${subjectCode}${y}`; const data = window[variableName]; if(Array.isArray(data)) { data.forEach((q, index) => { q.origin = { year: y, number: index + 1 }; }); questions.push(...data); } if(++loaded === yearsToLoad.length) { loadingOverlay.classList.add('hidden'); if(questions.length > 0) { startQuiz(title, questionCount); } else { showCustomAlert(`所選年份沒有可用的題目！`); } } }; s.onerror = () => { if(++loaded === yearsToLoad.length) { loadingOverlay.classList.add('hidden'); showCustomAlert(`載入 ${y} 年份題目失敗！`); } }; document.head.appendChild(s); }); }
   function startQuiz(title, questionCount){ isQuizSubmitted = false; isAllYearsMode = (questionCount > 0); if (isAllYearsMode || shouldShuffle) { shuffle(questions); } if (isAllYearsMode) { if(questions.length > questionCount) { questions = questions.slice(0, questionCount); } quizTitle.textContent = `${title} (${questions.length}題)`; } else { quizTitle.textContent = title; } userChoices = new Array(questions.length).fill(null); answerStatus = new Array(questions.length).fill(undefined); lastSavedChoices = [...userChoices]; currentSessionId = null; yearDiv.classList.add('hidden'); reviewConfigDiv.classList.add('hidden'); quizDiv.classList.remove('hidden'); renderQuestion(); renderJump(); }
   function handleOptionChange(e) { userChoices[current] = e.target.value; updateProgressBar(); updateJump(); }
   function updateProgressBar() { const answeredCount = userChoices.filter(choice => choice !== null).length; const totalCount = questions.length; if (totalCount > 0) { const progressPercentage = (answeredCount / totalCount) * 100; progressBar.style.width = `${progressPercentage}%`; } else { progressBar.style.width = '0%'; } }
-  function renderQuestion(){ clearTimeout(feedbackTimeout); updateProgressBar(); if(!isQuizSubmitted) quizSummaryEl.classList.add('hidden'); const q=questions[current]; if (!q) return; if (isAllYearsMode && q.origin) { yearLabel.textContent = `(出自 ${q.origin.year} 年 第 ${q.origin.number} 題)`; } else { yearLabel.textContent = `第 ${current + 1} / ${questions.length} 題`; } questionEl.innerHTML = `<span style="font-weight:700; margin-right:8px;">${current + 1}.</span> ${q.question.replace(/^\d+\.?\s*/, '')}`; questionImageEl.innerHTML = q.image && q.image.trim() !== '' ? `<img src="${q.image}" alt="題目附圖">` : ''; optionsEl.innerHTML=''; feedbackEl.textContent=''; feedbackEl.className = ''; if (isQuizSubmitted) { quizSummaryEl.classList.remove('hidden'); backBtn.classList.add('hidden'); restartBtn.classList.remove('hidden'); submitBtn.classList.add('hidden'); confirmBtn.classList.add('hidden'); nextBtn.classList.remove('hidden'); saveProgressBtn.classList.add('hidden'); q.options&&Object.entries(q.options).forEach(([k,v])=>{ const lbl=document.createElement('label'); lbl.className='option'; lbl.innerHTML=`<input type="radio" name="opt" value="${k}" disabled> ${k}. ${v}`; if (userChoices[current] === k) { lbl.querySelector('input').checked = true; lbl.classList.add('user-choice'); } if (q.answer.includes(k)) { lbl.classList.add('correct'); } else if (userChoices[current] === k) { lbl.classList.add('incorrect'); } optionsEl.appendChild(lbl); }); if (answerStatus[current]) { feedbackEl.textContent = '✔ 答對'; feedbackEl.className='correct'; } else { feedbackEl.textContent = `✖ 答錯，正確答案：${q.answer.join(',')}`; feedbackEl.className='incorrect';} } else { backBtn.classList.remove('hidden'); restartBtn.classList.add('hidden'); if (currentExamode === 'practice') { submitBtn.classList.add('hidden'); saveProgressBtn.classList.add('hidden'); if (answerStatus[current] === undefined) { confirmBtn.classList.remove('hidden'); nextBtn.classList.add('hidden'); } else { confirmBtn.classList.add('hidden'); nextBtn.classList.remove('hidden'); } } else { submitBtn.classList.remove('hidden'); saveProgressBtn.classList.remove('hidden'); confirmBtn.classList.add('hidden'); nextBtn.classList.remove('hidden'); } q.options&&Object.entries(q.options).forEach(([k,v])=>{ const lbl=document.createElement('label'); lbl.className='option'; lbl.innerHTML=`<input type="radio" name="opt" value="${k}"> ${k}. ${v}`; if (userChoices[current] === k) { lbl.querySelector('input').checked = true; } if (currentExamode === 'practice' && answerStatus[current] !== undefined) { lbl.querySelector('input').disabled = true; if (questions[current].answer.includes(k)) { lbl.classList.add('correct'); } else if (userChoices[current] === k) { lbl.classList.add('incorrect'); } } else { lbl.querySelector('input').onchange = handleOptionChange; } optionsEl.appendChild(lbl); }); if (currentExamode === 'practice' && answerStatus[current] !== undefined) { if (answerStatus[current]) { feedbackEl.textContent = '✔ 答對'; feedbackEl.className='correct'; } else { feedbackEl.textContent = `✖ 答錯，正確答案：${questions[current].answer.join(',')}`; feedbackEl.className='incorrect';} } } updateJump(); }
-  submitBtn.onclick = () => { const message = userChoices.filter(c=>c===null).length > 0 ? `還有 ${userChoices.filter(c=>c===null).length} 題未作答，確定要交卷嗎？` : '確定要交卷嗎？'; showCustomConfirm(message, () => { let correctCount = 0; for (let i = 0; i < questions.length; i++) { const isCorrect = questions[i].answer.includes(userChoices[i]); answerStatus[i] = isCorrect; if (isCorrect) correctCount++; } const passRate = correctCount / questions.length; quizSummaryEl.innerHTML = `<span class="summary-title">測驗結束！</span>答對題數：${correctCount} / ${questions.length}`; quizSummaryEl.className = passRate >= 0.6 ? 'passed' : 'failed'; isQuizSubmitted = true; current = 0; const completedSessions = getCompletedSessions(); const newReport = { id: Date.now(), subject: currentSubject, title: quizTitle.textContent, examMode: currentExamode, shouldShuffle: shouldShuffle, questions: questions, userChoices: userChoices, answerStatus: answerStatus, correctCount: correctCount, totalCount: questions.length, timestamp: new Date().toLocaleString('zh-TW') }; completedSessions.push(newReport); localStorage.setItem(COMPLETED_SESSIONS_KEY, JSON.stringify(completedSessions)); if(currentSessionId){ let saved = getSavedSessions(); saved = saved.filter(s => s.id !== currentSessionId); localStorage.setItem(SAVED_SESSIONS_KEY, JSON.stringify(saved)); } checkSavedData(); renderQuestion(); }, { confirmText: '確定交卷' }); };
+  function renderQuestion(){ clearTimeout(feedbackTimeout); updateProgressBar(); if(!isQuizSubmitted) quizSummaryEl.classList.add('hidden'); const q=questions[current]; if (!q) return; if (isAllYearsMode && q.origin) { yearLabel.textContent = `(出自 ${q.origin.year} 年 第 ${q.origin.number} 題)`; } else { yearLabel.textContent = `第 ${current + 1} / ${questions.length} 題`; } questionEl.innerHTML = `<span style="font-weight:700; margin-right:8px;">${current + 1}.</span> ${q.question.replace(/^\d+\.?\s*/, '')}`; questionImageEl.innerHTML = q.image && q.image.trim() !== '' ? `<img src="${q.image}" alt="題目附圖">` : ''; optionsEl.innerHTML=''; feedbackEl.textContent=''; feedbackEl.className = ''; if (isQuizSubmitted) { quizSummaryEl.classList.remove('hidden'); backBtn.classList.add('hidden'); restartBtn.classList.remove('hidden'); submitBtn.classList.add('hidden'); confirmBtn.classList.add('hidden'); nextBtn.classList.remove('hidden'); saveProgressBtn.classList.add('hidden'); q.options&&Object.entries(q.options).forEach(([k,v])=>{ const lbl=document.createElement('label'); lbl.className='option'; lbl.innerHTML=`<input type="radio" name="opt" value="${k}" disabled> ${k}. ${v}`; if (userChoices[current] === k) { lbl.querySelector('input').checked = true; lbl.classList.add('user-choice'); } if (q.answer.includes(k)) { lbl.classList.add('correct'); } else if (userChoices[current] === k) { lbl.classList.add('incorrect'); } optionsEl.appendChild(lbl); }); if (answerStatus[current]) { feedbackEl.textContent = '✔ 答對'; feedbackEl.className='correct'; } else { feedbackEl.textContent = `✖ 答錯，正確答案：${q.answer.join(',')}`; feedbackEl.className='incorrect';} } else { backBtn.classList.remove('hidden'); restartBtn.classList.add('hidden'); if (currentExamMode === 'practice') { submitBtn.classList.add('hidden'); saveProgressBtn.classList.add('hidden'); if (answerStatus[current] === undefined) { confirmBtn.classList.remove('hidden'); nextBtn.classList.add('hidden'); } else { confirmBtn.classList.add('hidden'); nextBtn.classList.remove('hidden'); } } else { submitBtn.classList.remove('hidden'); saveProgressBtn.classList.remove('hidden'); confirmBtn.classList.add('hidden'); nextBtn.classList.remove('hidden'); } q.options&&Object.entries(q.options).forEach(([k,v])=>{ const lbl=document.createElement('label'); lbl.className='option'; lbl.innerHTML=`<input type="radio" name="opt" value="${k}"> ${k}. ${v}`; if (userChoices[current] === k) { lbl.querySelector('input').checked = true; } if (currentExamMode === 'practice' && answerStatus[current] !== undefined) { lbl.querySelector('input').disabled = true; if (questions[current].answer.includes(k)) { lbl.classList.add('correct'); } else if (userChoices[current] === k) { lbl.classList.add('incorrect'); } } else { lbl.querySelector('input').onchange = handleOptionChange; } optionsEl.appendChild(lbl); }); if (currentExamMode === 'practice' && answerStatus[current] !== undefined) { if (answerStatus[current]) { feedbackEl.textContent = '✔ 答對'; feedbackEl.className='correct'; } else { feedbackEl.textContent = `✖ 答錯，正確答案：${questions[current].answer.join(',')}`; feedbackEl.className='incorrect';} } } updateJump(); }
+  submitBtn.onclick = () => { const message = userChoices.filter(c=>c===null).length > 0 ? `還有 ${userChoices.filter(c=>c===null).length} 題未作答，確定要交卷嗎？` : '確定要交卷嗎？'; showCustomConfirm(message, () => { let correctCount = 0; for (let i = 0; i < questions.length; i++) { const isCorrect = questions[i].answer.includes(userChoices[i]); answerStatus[i] = isCorrect; if (isCorrect) correctCount++; } const passRate = correctCount / questions.length; quizSummaryEl.innerHTML = `<span class="summary-title">測驗結束！</span>答對題數：${correctCount} / ${questions.length}`; quizSummaryEl.className = passRate >= 0.6 ? 'passed' : 'failed'; isQuizSubmitted = true; current = 0; const completedSessions = getCompletedSessions(); const newReport = { id: Date.now(), subject: currentSubject, title: quizTitle.textContent, examMode: currentExamMode, shouldShuffle: shouldShuffle, questions: questions, userChoices: userChoices, answerStatus: answerStatus, correctCount: correctCount, totalCount: questions.length, timestamp: new Date().toLocaleString('zh-TW') }; completedSessions.push(newReport); localStorage.setItem(COMPLETED_SESSIONS_KEY, JSON.stringify(completedSessions)); if(currentSessionId){ let saved = getSavedSessions(); saved = saved.filter(s => s.id !== currentSessionId); localStorage.setItem(SAVED_SESSIONS_KEY, JSON.stringify(saved)); } checkSavedData(); renderQuestion(); }, { confirmText: '確定交卷' }); };
   confirmBtn.onclick = () => { const sel=document.querySelector('input[name="opt"]:checked'); if(!sel){showCustomAlert('請先選擇一個選項');return;} const choice = sel.value; const correct = questions[current].answer.includes(choice); answerStatus[current] = correct; userChoices[current] = choice; renderQuestion(); updateProgressBar(); };
   prevBtn.onclick=()=>{ if (current > 0) { current--; renderQuestion(); } else { showTempFeedback('沒有上一題哦！'); } };
   nextBtn.onclick=()=>{ if (current < questions.length - 1) { current++; renderQuestion(); } else { showTempFeedback('這是最後一題囉！'); } };
   const goBackToYearSelection = () => { quizDiv.classList.add('hidden'); yearDiv.classList.remove('hidden'); isQuizSubmitted = false; isAllYearsMode = false; checkSavedData(); renderYearButtons(); };
   restartBtn.onclick = goBackToYearSelection;
   function showTempFeedback(message, duration = 2000) { clearTimeout(feedbackTimeout); const originalHTML = feedbackEl.innerHTML; const originalClass = feedbackEl.className; const hasOriginalContent = originalHTML.trim() !== '' && !originalClass.includes('info'); feedbackEl.innerHTML = message; feedbackEl.className = 'info'; feedbackTimeout = setTimeout(() => { feedbackEl.innerHTML = hasOriginalContent ? originalHTML : ''; feedbackEl.className = hasOriginalContent ? originalClass : ''; }, duration); }
-  function renderJump(){ jumpPanel.innerHTML=''; questions.forEach((_,i)=>{ const b=document.createElement('button'); b.textContent=i+1; const st=answerStatus[i]; let bgColor = '#6c757d'; if(isQuizSubmitted) { bgColor = st === true ? 'var(--success-color)' : st === false ? 'var(--danger-color)' : '#6c757d'; } else { if (userChoices[i] !== null) bgColor = currentExamode === 'practice' && st !== undefined ? (st === true ? 'var(--success-color)' : 'var(--danger-color)') : 'var(--primary-color)'; } b.style.background = bgColor; b.onclick=e=>{ e.stopPropagation(); current=i; renderQuestion(); jumpPanel.style.display = 'none'; }; jumpPanel.appendChild(b); }); }
-  function updateJump(){ Array.from(jumpPanel.children).forEach((b,i)=>{ if (i < questions.length) { const st=answerStatus[i]; let bgColor = '#6c757d'; if(isQuizSubmitted) { bgColor = st === true ? 'var(--success-color)' : st === false ? 'var(--danger-color)' : '#6c757d'; } else { if (userChoices[i] !== null) bgColor = currentExamode === 'practice' && st !== undefined ? (st === true ? 'var(--success-color)' : 'var(--danger-color)') : 'var(--primary-color)'; } b.style.background = bgColor; } }); }
+  function renderJump(){ jumpPanel.innerHTML=''; questions.forEach((_,i)=>{ const b=document.createElement('button'); b.textContent=i+1; const st=answerStatus[i]; let bgColor = '#6c757d'; if(isQuizSubmitted) { bgColor = st === true ? 'var(--success-color)' : st === false ? 'var(--danger-color)' : '#6c757d'; } else { if (userChoices[i] !== null) bgColor = currentExamMode === 'practice' && st !== undefined ? (st === true ? 'var(--success-color)' : 'var(--danger-color)') : 'var(--primary-color)'; } b.style.background = bgColor; b.onclick=e=>{ e.stopPropagation(); current=i; renderQuestion(); jumpPanel.style.display = 'none'; }; jumpPanel.appendChild(b); }); }
+  function updateJump(){ Array.from(jumpPanel.children).forEach((b,i)=>{ if (i < questions.length) { const st=answerStatus[i]; let bgColor = '#6c757d'; if(isQuizSubmitted) { bgColor = st === true ? 'var(--success-color)' : st === false ? 'var(--danger-color)' : '#6c757d'; } else { if (userChoices[i] !== null) bgColor = currentExamMode === 'practice' && st !== undefined ? (st === true ? 'var(--success-color)' : 'var(--danger-color)') : 'var(--primary-color)'; } b.style.background = bgColor; } }); }
   function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
 </script>
 </body>
