@@ -154,6 +154,36 @@
         max-height: 75vh; /* 在手機上限制最大高度 */
       }
     }
+    
+    /* === 新增：行動裝置控制按鈕優化 === */
+    @media (max-width: 600px) {
+      #controls {
+        flex-wrap: wrap; /* 允許內部元素換行 */
+        gap: 12px; /* 設定行與行之間的間距 */
+        padding-top: 1rem;
+        margin-top: 1rem;
+      }
+    
+      /* 將中間的操作按鈕/群組移到最上面 */
+      #save-progress-btn, #right-controls {
+        order: -1; /* 使用 order 屬性將它們在視覺上提前 */
+        width: 100%; /* 讓它們佔滿整行寬度 */
+        margin: 0; /* 清除原有 margin */
+      }
+    
+      /* 讓右側按鈕群組內的按鈕置中顯示 */
+      #right-controls {
+        justify-content: center;
+        gap: 12px; /* 增加按鈕間距 */
+      }
+      
+      /* 讓左右導航按鈕各佔一半 */
+      #prev-btn, #next-btn {
+        flex-grow: 1; /* 讓它們自動填滿剩餘空間 */
+        flex-basis: calc(50% - 6px); /* 確保它們有基礎寬度來計算，calc 可精準控制寬度 */
+        margin: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -292,7 +322,7 @@
   </div>
 
 <script>
-  // --- JS 變數宣告 ---
+  // --- JS 變數宣告 (您的 JS 維持不變) ---
   const allYears=[98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113];
   const subjectMap = { "基礎言語科學": "bss", "兒童語言障礙": "cld", "嗓音與吞嚥障礙": "vsd", "構音與語暢障礙": "afd" };
   const SAVED_SESSIONS_KEY = 'examAppSavedSessions';
