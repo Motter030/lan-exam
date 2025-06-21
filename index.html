@@ -74,8 +74,9 @@
     .item-actions button { font-size: 0.9rem; padding: 6px 10px; }
     .view-report-btn, .continue-session-btn { background-color: var(--primary-color); }
     .delete-item-btn { background-color: var(--danger-color); }
-    .year-footer-controls { display: flex; flex-direction: column; gap: 12px; margin-top: 2rem; }
+    .year-footer-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-top: 2rem; gap: 1rem; }
     .year-footer-controls button { width: 100%; }
+    @media (min-width: 600px) { .year-footer-controls button { width: auto; flex-grow: 1; } .year-footer-controls button:first-child { flex-grow: 0; } }
     #quiz-header { position: relative; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     #quiz-summary { text-align: center; font-size: 1.2rem; font-weight: bold; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; }
     #quiz-summary .summary-title { font-size: 1.5rem; display: block; margin-bottom: 0.5rem; }
@@ -110,83 +111,66 @@
 
     /* === 控制按鈕的最終樣式 === */
     #controls {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr; /* 三欄式佈局 */
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
       margin-top: 1.5rem;
       border-top: 1px solid var(--border-color);
       padding-top: 1.5rem;
+      gap: 10px;
     }
-    #prev-btn {
-        grid-column: 1 / 2;
-        justify-self: start;
+    #center-controls, #right-controls {
+      display: flex;
+      gap: 10px;
     }
     #center-controls {
-        grid-column: 2 / 3;
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-    }
-    #right-controls {
-        grid-column: 3 / 4;
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
+      flex-grow: 1;
+      justify-content: center;
     }
     #controls.practice-mode-layout #center-controls,
     #controls.submitted-layout #center-controls {
       display: none;
     }
-    #controls.practice-mode-layout,
-    #controls.submitted-layout {
-        grid-template-columns: 1fr 1fr; /* 練習/交卷模式變為兩欄 */
-    }
-    #controls.practice-mode-layout #right-controls,
-    #controls.submitted-layout #right-controls {
-        grid-column: 2 / 3;
-    }
 
     /* 行動裝置佈局 (max-width: 600px) */
     @media (max-width: 600px) {
       #controls {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* 手機上永遠是兩欄 */
-        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
       }
+      
+      /* 預設 (考試模式) 佈局 */
       #center-controls {
-        grid-column: 1 / 3; /* 佔滿整行 */
         order: 1; /* 第一行 */
+        width: 100%;
       }
-      #center-controls button {
-        flex-grow: 1; /* 讓內部按鈕平分寬度 */
+      #prev-btn, #right-controls {
+        order: 2; /* 第二行 */
       }
       #prev-btn {
-        grid-column: 1 / 2;
-        order: 2; /* 第二行 */
+        flex-grow: 1;
       }
       #right-controls {
-        grid-column: 2 / 3;
-        order: 2; /* 第二行 */
+        flex-grow: 1;
+        justify-content: flex-end;
       }
-      #right-controls button {
-        width: 100%; /* 讓按鈕填滿欄位 */
+      #right-controls #next-btn {
+        width: 100%;
       }
 
-      /* 練習/交卷模式的特別佈局 */
+      /* 練習模式 & 交卷後 的特別佈局 */
       #controls.practice-mode-layout,
       #controls.submitted-layout {
-        grid-template-columns: 1fr 1fr; /* 保持兩欄 */
+        flex-wrap: nowrap; /* 強制不換行 */
+        justify-content: space-between;
       }
       #controls.practice-mode-layout #prev-btn,
       #controls.submitted-layout #prev-btn {
-        order: 0; /* 恢復預設順序 */
-        grid-column: 1 / 2;
+          flex-grow: 0;
       }
-      #controls.practice-mode-layout #right-controls,
-      #controls.submitted-layout #right-controls {
-        order: 0; /* 恢復預設順序 */
-        grid-column: 2 / 3;
+       #controls.practice-mode-layout #right-controls,
+       #controls.submitted-layout #right-controls {
+          flex-grow: 0;
       }
     }
   </style>
@@ -216,10 +200,9 @@
     <div id="year-buttons" class="button-grid"></div>
     <h2>或</h2>
     <button id="all-btn">總複習</button>
-    <!-- === 按鈕順序調整處 === -->
     <div class="year-footer-controls">
-      <button id="report-card-btn-year" class="hidden">成績單</button>
       <button id="continue-exam-btn-year" class="hidden">繼續作答</button>
+      <button id="report-card-btn-year" class="hidden">成績單</button>
       <button id="back-to-subject">返回科目選擇</button>
     </div>
   </div>
@@ -262,7 +245,7 @@
     <div id="options"></div>
     <div id="feedback"></div>
 
-    <!-- === 保持上次的 HTML 結構 === -->
+    <!-- === 最終 HTML 結構修正處 === -->
     <div id="controls">
         <button id="prev-btn">上一題</button>
         <div id="center-controls">
@@ -330,7 +313,7 @@
   </div>
 
 <script>
-  // --- JS 變數宣告 ---
+  // --- JS (已修正所有拼寫錯誤) ---
   const allYears=[98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113];
   const subjectMap = { "基礎言語科學": "bss", "兒童語言障礙": "cld", "嗓音與吞嚥障礙": "vsd", "構音與語暢障礙": "afd" };
   const SAVED_SESSIONS_KEY = 'examAppSavedSessions';
@@ -495,15 +478,19 @@
   function handleOptionChange(e) { userChoices[current] = e.target.value; updateProgressBar(); updateJump(); }
   function updateProgressBar() { const answeredCount = userChoices.filter(choice => choice !== null).length; const totalCount = questions.length; if (totalCount > 0) { const progressPercentage = (answeredCount / totalCount) * 100; progressBar.style.width = `${progressPercentage}%`; } else { progressBar.style.width = '0%'; } }
   
+  // === 最終修正版 renderQuestion 函式 ===
   function renderQuestion(){
     clearTimeout(feedbackTimeout);
     updateProgressBar();
     
     const controlsContainer = document.getElementById('controls');
     const centerControls = document.getElementById('center-controls');
+    const rightControls = document.getElementById('right-controls');
 
+    // 重置所有佈局 class
     controlsContainer.classList.remove('practice-mode-layout', 'submitted-layout');
 
+    // 根據模式設定佈局
     if (isQuizSubmitted) {
         controlsContainer.classList.add('submitted-layout');
     } else if (currentExamMode === 'practice') {
