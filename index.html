@@ -5,14 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>語言治療考題模擬</title>
   <style>
-    /* ... (大部分 CSS 不變) ... */
+    /* ... (所有其他 CSS 維持不變) ... */
     
-    /* === 修改點：提升通用 Modal 的層級 === */
     #custom-modal {
-      z-index: 1001; /* 確保它在其他 Modal 之上 */
+      z-index: 1001; 
     }
-
-    /* 其他所有樣式保持不變 */
     :root { --primary-color: #007bff; --secondary-color: #6c757d; --success-color: #28a745; --danger-color: #dc3545; --warning-color: #ffc107; --info-color: #17a2b8; --light-color: #f8f9fa; --dark-color: #343a40; --bg-color: #f0f2f5; --border-color: #dee2e6; --white-color: #fff; --shadow-color: rgba(0, 0, 0, 0.1); --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "微軟正黑體", "Microsoft JhengHei", sans-serif; }
     * { box-sizing: border-box; }
     body { margin: 0; padding: 20px; font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color); display: grid; place-items: center; min-height: 100vh; line-height: 1.6; }
@@ -114,80 +111,43 @@
     #controls > button { margin: 0 5px; }
     #right-controls { display: flex; margin-left: auto; }
     
-    /* === 修正後的 Jump Panel 樣式 (解決手機跑版問題) === */
-    #jump-panel {
-      position: fixed;
-      top: 100px;
-      right: 20px; /* 桌機版預設靠右 20px */
-      background: var(--white-color);
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-      max-height: calc(100vh - 120px);
-      overflow-y: auto;
-      width: 300px;
-      z-index: 1002; /* 確保在通用 Modal 之上 */
-      display: none;
-      grid-template-columns: repeat(5, 1fr);
-      grid-auto-rows: 40px;
-      gap: 8px;
-      transition: opacity 0.2s, transform 0.2s;
-    }
-    #jump-panel button { 
-      padding: 0; 
-      font-size: .9rem; 
-      color: var(--white-color); 
-      min-width: 40px; 
-      height: 40px; 
-      margin:0; 
-    }
-    
-    /* 針對手機等小螢幕裝置的特別調整 */
+    #jump-panel { position: fixed; top: 100px; right: 20px; background: var(--white-color); padding: 1rem; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); max-height: calc(100vh - 120px); overflow-y: auto; width: 300px; z-index: 1002; display: none; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 40px; gap: 8px; transition: opacity 0.2s, transform 0.2s; }
+    #jump-panel button { padding: 0; font-size: .9rem; color: var(--white-color); min-width: 40px; height: 40px; margin:0; }
+
     @media (max-width: 768px) {
-      #jump-panel {
-        top: 80px; /* 在手機上更靠近頂部 */
-        left: 50%; /* 透過 left:50% 和 transform 來達成水平置中 */
-        transform: translateX(-50%);
-        right: auto; /* 取消 right 定位 */
-        width: 90vw; /* 寬度為畫面的90% */
-        max-width: 400px; /* 但最大不要超過 400px */
-        max-height: 75vh; /* 在手機上限制最大高度 */
-      }
+      #jump-panel { top: 80px; left: 50%; transform: translateX(-50%); right: auto; width: 90vw; max-width: 400px; max-height: 75vh; }
     }
     
-    /* === 新增：行動裝置控制按鈕優化 === */
+    /* === 新增：行動裝置控制按鈕優化 (修正版) === */
     @media (max-width: 600px) {
       #controls {
-        flex-wrap: wrap; /* 允許內部元素換行 */
-        gap: 12px; /* 設定行與行之間的間距 */
-        padding-top: 1rem;
-        margin-top: 1rem;
+        flex-wrap: wrap; /* 允許換行，這是基礎 */
+        justify-content: center; /* 讓第一行的按鈕置中 */
+        gap: 12px; /* 按鈕和行之間的間距 */
       }
     
-      /* 將中間的操作按鈕/群組移到最上面 */
-      #save-progress-btn, #right-controls {
-        order: -1; /* 使用 order 屬性將它們在視覺上提前 */
-        width: 100%; /* 讓它們佔滿整行寬度 */
-        margin: 0; /* 清除原有 margin */
-      }
-    
-      /* 讓右側按鈕群組內的按鈕置中顯示 */
-      #right-controls {
-        justify-content: center;
-        gap: 12px; /* 增加按鈕間距 */
+      /* 步驟1: 將導覽按鈕(上一題/下一題)定義為第二順位(order: 2)，並讓它們佔滿整行 */
+      #prev-btn, #next-btn {
+        order: 2; /* 把它們放到佈局的後面 */
+        flex-grow: 1; /* 讓它們伸展填滿空間 */
+        flex-basis: calc(50% - 6px); /* 確保它們的基礎寬度是含間距的一半 */
+        margin: 0;
       }
       
-      /* 讓左右導航按鈕各佔一半 */
-      #prev-btn, #next-btn {
-        flex-grow: 1; /* 讓它們自動填滿剩餘空間 */
-        flex-basis: calc(50% - 6px); /* 確保它們有基礎寬度來計算，calc 可精準控制寬度 */
-        margin: 0;
+      /* 步驟2: 將操作按鈕(#save-progress-btn)和操作按鈕群組(#right-controls)定義為第一順位(order: 1) */
+      #save-progress-btn, #right-controls {
+        order: 1; /* 把它們放到佈局的前面 */
+      }
+    
+      /* 步驟3: 清除 #right-controls 預設的 margin-left，這樣它才能跟其他按鈕一起置中 */
+      #right-controls {
+        margin-left: 0;
       }
     }
   </style>
 </head>
 <body>
-  <!-- HTML 結構 (完整版) -->
+  <!-- 你的 HTML 結構維持不變 -->
   <div id="loading-overlay" class="hidden">
     <div class="spinner"></div><p>正在載入題庫，請稍候...</p>
   </div>
@@ -322,7 +282,7 @@
   </div>
 
 <script>
-  // --- JS 變數宣告 (您的 JS 維持不變) ---
+  // 你的 JavaScript 維持不變
   const allYears=[98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113];
   const subjectMap = { "基礎言語科學": "bss", "兒童語言障礙": "cld", "嗓音與吞嚥障礙": "vsd", "構音與語暢障礙": "afd" };
   const SAVED_SESSIONS_KEY = 'examAppSavedSessions';
@@ -391,75 +351,18 @@
 
   function showModal(modalElement) { modalElement.classList.remove('hidden'); setTimeout(() => modalElement.classList.add('visible'), 10); }
   function hideModal(modalElement) { modalElement.classList.remove('visible'); setTimeout(() => modalElement.classList.add('hidden'), 300); }
-  
-  // === 升級後的通用 Modal 函式 ===
-  function showCustomAlert(message, title = "提示") {
-    modalTitle.textContent = title;
-    modalMessage.textContent = message;
-    modalConfirmBtn.classList.add('hidden');
-    modalCancelBtn.classList.add('hidden');
-    modalOkBtn.classList.remove('hidden');
-    showModal(customModal);
-    modalOkBtn.onclick = () => hideModal(customModal);
-  }
-
-  function showCustomConfirm(message, onConfirm, { title = "請確認", confirmText = "確定" } = {}) {
-    modalTitle.textContent = title;
-    modalMessage.textContent = message;
-    modalConfirmBtn.textContent = confirmText; // 動態設定按鈕文字
-    modalConfirmBtn.classList.remove('hidden');
-    modalCancelBtn.classList.remove('hidden');
-    modalOkBtn.classList.add('hidden');
-    showModal(customModal);
-    modalConfirmBtn.onclick = () => { hideModal(customModal); setTimeout(onConfirm, 300); };
-    modalCancelBtn.onclick = () => hideModal(customModal);
-  }
-  
+  function showCustomAlert(message, title = "提示") { modalTitle.textContent = title; modalMessage.textContent = message; modalConfirmBtn.classList.add('hidden'); modalCancelBtn.classList.add('hidden'); modalOkBtn.classList.remove('hidden'); showModal(customModal); modalOkBtn.onclick = () => hideModal(customModal); }
+  function showCustomConfirm(message, onConfirm, { title = "請確認", confirmText = "確定" } = {}) { modalTitle.textContent = title; modalMessage.textContent = message; modalConfirmBtn.textContent = confirmText; modalConfirmBtn.classList.remove('hidden'); modalCancelBtn.classList.remove('hidden'); modalOkBtn.classList.add('hidden'); showModal(customModal); modalConfirmBtn.onclick = () => { hideModal(customModal); setTimeout(onConfirm, 300); }; modalCancelBtn.onclick = () => hideModal(customModal); }
   function getSavedSessions() { return JSON.parse(localStorage.getItem(SAVED_SESSIONS_KEY)) || []; }
   function getCompletedSessions() { return JSON.parse(localStorage.getItem(COMPLETED_SESSIONS_KEY)) || []; }
-  function saveSession() {
-    let sessions = getSavedSessions();
-    if (currentSessionId) { sessions = sessions.filter(s => s.id !== currentSessionId); }
-    const newSession = { id: currentSessionId || Date.now(), subject: currentSubject, title: quizTitle.textContent, examMode: currentExamMode, shouldShuffle: shouldShuffle, questions: questions, userChoices: userChoices, timestamp: new Date().toLocaleString('zh-TW') };
-    sessions.push(newSession);
-    localStorage.setItem(SAVED_SESSIONS_KEY, JSON.stringify(sessions));
-    lastSavedChoices = [...userChoices];
-    showCustomAlert('進度已儲存！');
-    checkSavedData();
-  }
-  function checkSavedData() {
-    const savedSessions = getSavedSessions(); const completedSessions = getCompletedSessions();
-    continueExamBtn.classList.toggle('hidden', savedSessions.length === 0);
-    reportCardBtn.classList.toggle('hidden', completedSessions.length === 0);
-    const hasSavedForCurrent = savedSessions.some(s => s.subject === currentSubject);
-    const hasCompletedForCurrent = completedSessions.some(s => s.subject === currentSubject);
-    continueExamBtnYear.classList.toggle('hidden', !hasSavedForCurrent);
-    reportCardBtnYear.classList.toggle('hidden', !hasCompletedForCurrent);
-  }
+  function saveSession() { let sessions = getSavedSessions(); if (currentSessionId) { sessions = sessions.filter(s => s.id !== currentSessionId); } const newSession = { id: currentSessionId || Date.now(), subject: currentSubject, title: quizTitle.textContent, examMode: currentExamMode, shouldShuffle: shouldShuffle, questions: questions, userChoices: userChoices, timestamp: new Date().toLocaleString('zh-TW') }; sessions.push(newSession); localStorage.setItem(SAVED_SESSIONS_KEY, JSON.stringify(sessions)); lastSavedChoices = [...userChoices]; showCustomAlert('進度已儲存！'); checkSavedData(); }
+  function checkSavedData() { const savedSessions = getSavedSessions(); const completedSessions = getCompletedSessions(); continueExamBtn.classList.toggle('hidden', savedSessions.length === 0); reportCardBtn.classList.toggle('hidden', completedSessions.length === 0); const hasSavedForCurrent = savedSessions.some(s => s.subject === currentSubject); const hasCompletedForCurrent = completedSessions.some(s => s.subject === currentSubject); continueExamBtnYear.classList.toggle('hidden', !hasSavedForCurrent); reportCardBtnYear.classList.toggle('hidden', !hasCompletedForCurrent); }
   function renderSavedSessions() { let sessions = getSavedSessions(); if (!yearDiv.classList.contains('hidden')) { sessions = sessions.filter(s => s.subject === currentSubject); } savedSessionsList.innerHTML = ''; if (sessions.length === 0) { savedSessionsList.innerHTML = '<li class="list-item">沒有儲存的紀錄。</li>'; return; } sessions.forEach(session => { const li = document.createElement('li'); li.className = 'list-item'; li.innerHTML = `<div class="item-info"><span class="item-title">${session.title} (${session.subject})</span><span class="item-time">儲存於：${session.timestamp}</span></div><div class="item-actions"><button class="continue-session-btn" data-id="${session.id}">繼續</button><button class="delete-item-btn" data-type="saved" data-id="${session.id}">刪除</button></div>`; savedSessionsList.appendChild(li); }); }
   function renderReportCard() { let sessions = getCompletedSessions(); if (!yearDiv.classList.contains('hidden')) { sessions = sessions.filter(s => s.subject === currentSubject); } reportCardList.innerHTML = ''; if (sessions.length === 0) { reportCardList.innerHTML = '<li class="list-item">沒有已完成的成績紀錄。</li>'; return; } sessions.forEach(session => { const li = document.createElement('li'); li.className = 'list-item'; li.innerHTML = `<div class="item-info"><span class="item-title">${session.title} (${session.subject})</span><span class="item-score">成績：${session.correctCount} / ${session.totalCount}</span><span class="item-time">完成於：${session.timestamp}</span></div><div class="item-actions"><button class="view-report-btn" data-id="${session.id}">檢視</button><button class="delete-item-btn" data-type="completed" data-id="${session.id}">刪除</button></div>`; reportCardList.appendChild(li); }); }
-  
-  function renderYearButtons() {
-    yearButtons.innerHTML = '';
-    allYears.forEach(y => {
-      const b = document.createElement('button'); b.textContent = y + '年';
-      b.onclick = (e) => { e.stopPropagation(); tempSelectedYear = y; quizOptionsTitle.textContent = `${y} 年考古題`; showModal(quizOptionsModal); };
-      yearButtons.appendChild(b);
-    });
-  }
-
+  function renderYearButtons() { yearButtons.innerHTML = ''; allYears.forEach(y => { const b = document.createElement('button'); b.textContent = y + '年'; b.onclick = (e) => { e.stopPropagation(); tempSelectedYear = y; quizOptionsTitle.textContent = `${y} 年考古題`; showModal(quizOptionsModal); }; yearButtons.appendChild(b); }); }
   window.addEventListener('load', checkSavedData);
   const subjectButtons = subjectDiv.querySelectorAll('button[data-subject]:not([disabled])');
-  subjectButtons.forEach(button => {
-    button.onclick = () => {
-      currentSubject = button.dataset.subject; 
-      subjTitle.textContent = currentSubject;
-      subjectDiv.classList.add('hidden');
-      yearDiv.classList.remove('hidden');
-      checkSavedData(); 
-      renderYearButtons();
-    };
-  });
+  subjectButtons.forEach(button => { button.onclick = () => { currentSubject = button.dataset.subject; subjTitle.textContent = currentSubject; subjectDiv.classList.add('hidden'); yearDiv.classList.remove('hidden'); checkSavedData(); renderYearButtons(); }; });
   backToSub.onclick=()=>{yearDiv.classList.add('hidden'); subjectDiv.classList.remove('hidden');};
   allBtn.onclick = () => { yearDiv.classList.add('hidden'); reviewConfigDiv.classList.remove('hidden'); yearCheckboxesContainer.innerHTML = ''; allYears.forEach(y => { const label = document.createElement('label'); label.innerHTML = `<input type="checkbox" value="${y}"><span>${y}年</span>`; yearCheckboxesContainer.appendChild(label); }); toggleAllYearsBtn.textContent = '全選'; };
   backFromConfigBtn.onclick = () => { reviewConfigDiv.classList.add('hidden'); yearDiv.classList.remove('hidden'); };
@@ -483,7 +386,6 @@
   reportCardBtnYear.onclick = () => { renderReportCard(); showModal(reportCardModal); };
   closeReportCardModalBtn.onclick = () => hideModal(reportCardModal);
   reportCardList.addEventListener('click', e => { const target = e.target; if (!target.matches('.view-report-btn, .view-report-btn *')) return; const button = e.target.closest('.view-report-btn'); const sessionId = parseInt(button.dataset.id); const sessions = getCompletedSessions(); const sessionToView = sessions.find(s => s.id === sessionId); if (sessionToView) { questions = sessionToView.questions; userChoices = sessionToView.userChoices; answerStatus = sessionToView.answerStatus; currentSubject = sessionToView.subject; isQuizSubmitted = true; current = 0; currentSessionId = null; subjectDiv.classList.add('hidden'); yearDiv.classList.add('hidden'); reviewConfigDiv.classList.add('hidden'); quizDiv.classList.remove('hidden'); quizTitle.textContent = sessionToView.title; quizSummaryEl.innerHTML = `<span class="summary-title">測驗結果</span>答對題數：${sessionToView.correctCount} / ${sessionToView.totalCount}`; quizSummaryEl.className = (sessionToView.correctCount / sessionToView.totalCount) >= 0.6 ? 'passed' : 'failed'; renderQuestion(); renderJump(); hideModal(reportCardModal); } });
-
   function loadAndStartQuiz(yearsToLoad, subject, title, questionCount = 0) { const subjectCode = subjectMap[subject]; if (!subjectCode) { showCustomAlert(`錯誤：找不到科目 "${subject}" 的設定！`); return; } loadingOverlay.classList.remove('hidden'); questions = []; current = 0; answerStatus = []; userChoices = []; let loaded = 0; if (yearsToLoad.length === 0) { loadingOverlay.classList.add('hidden'); return; } yearsToLoad.forEach(y => { const s = document.createElement('script'); s.src = `questions/${subject}/${subject}${y}.js`; s.onload = () => { const variableName = `questions_${subjectCode}${y}`; const data = window[variableName]; if(Array.isArray(data)) { data.forEach((q, index) => { q.origin = { year: y, number: index + 1 }; }); questions.push(...data); } if(++loaded === yearsToLoad.length) { loadingOverlay.classList.add('hidden'); if(questions.length > 0) { startQuiz(title, questionCount); } else { showCustomAlert(`所選年份沒有可用的題目！`); } } }; s.onerror = () => { if(++loaded === yearsToLoad.length) { loadingOverlay.classList.add('hidden'); showCustomAlert(`載入 ${y} 年份題目失敗！`); } }; document.head.appendChild(s); }); }
   function startQuiz(title, questionCount){ isQuizSubmitted = false; isAllYearsMode = (questionCount > 0); if (isAllYearsMode || shouldShuffle) { shuffle(questions); } if (isAllYearsMode) { if(questions.length > questionCount) { questions = questions.slice(0, questionCount); } quizTitle.textContent = `${title} (${questions.length}題)`; } else { quizTitle.textContent = title; } userChoices = new Array(questions.length).fill(null); answerStatus = new Array(questions.length).fill(undefined); lastSavedChoices = [...userChoices]; currentSessionId = null; yearDiv.classList.add('hidden'); reviewConfigDiv.classList.add('hidden'); quizDiv.classList.remove('hidden'); renderQuestion(); renderJump(); }
   function handleOptionChange(e) { userChoices[current] = e.target.value; updateProgressBar(); updateJump(); }
